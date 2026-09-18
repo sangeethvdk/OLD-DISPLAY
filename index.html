@@ -1,1577 +1,691 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>OLED Studio</title>
-
-
-<style>
-
-/* ============================= */
-/* BASIC */
-/* ============================= */
-
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-    font-family:Arial,sans-serif;
-}
-
-body{
-    background:#090d12;
-    color:white;
-    min-height:100vh;
-    padding:20px;
-}
-
-.container{
-    max-width:1100px;
-    margin:auto;
-}
-
-
-/* ============================= */
-/* HEADER */
-/* ============================= */
-
-.header{
-    background:#151c25;
-    border-radius:22px;
-    padding:25px;
-    margin-bottom:20px;
-
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-}
-
-.logo{
-    font-size:30px;
-    font-weight:bold;
-}
-
-.subtitle{
-    color:#9da8b8;
-    margin-top:7px;
-}
-
-.status{
-    color:#ffaa00;
-    font-weight:bold;
-}
-
-
-/* ============================= */
-/* MAIN CARDS */
-/* ============================= */
-
-.grid{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:18px;
-}
-
-.card{
-    background:#151c25;
-    border-radius:20px;
-    padding:25px;
-}
-
-.card h2{
-    margin-bottom:8px;
-}
-
-.card p{
-    color:#9da8b8;
-    margin-bottom:18px;
-}
-
-.mainButton{
-    width:100%;
-    background:white;
-    color:black;
-    border:none;
-    border-radius:12px;
-    padding:14px;
-    cursor:pointer;
-    font-weight:bold;
-    font-size:15px;
-}
-
-.mainButton:hover{
-    opacity:.85;
-}
-
-
-/* ============================= */
-/* PANELS */
-/* ============================= */
-
-.panel{
-    background:#151c25;
-    border-radius:20px;
-    padding:25px;
-    margin-top:20px;
-}
-
-
-/* ============================= */
-/* WRITE */
-/* ============================= */
-
-textarea{
-    width:100%;
-    height:120px;
-
-    margin-top:15px;
-
-    background:#090d12;
-    color:white;
-
-    border:1px solid #394554;
-    border-radius:14px;
-
-    padding:15px;
-
-    font-size:16px;
-    resize:vertical;
-}
-
-.sendButton{
-    width:100%;
-    margin-top:15px;
-
-    background:white;
-    color:black;
-
-    border:none;
-    border-radius:12px;
-
-    padding:14px;
-
-    cursor:pointer;
-    font-weight:bold;
-}
-
-
-/* ============================= */
-/* OLED PREVIEW */
-/* ============================= */
-
-.oled{
-    width:320px;
-    height:160px;
-
-    margin:20px auto;
-
-    background:black;
-
-    border:2px solid #394554;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    overflow:hidden;
-
-    text-align:center;
-}
-
-.oledText{
-    font-family:monospace;
-    font-size:18px;
-
-    white-space:pre-wrap;
-    word-break:break-word;
-}
-
-
-/* ============================= */
-/* DRAWING */
-/* ============================= */
-
-#drawPanel{
-    display:none;
-}
-
-.canvasWrapper{
-    width:100%;
-
-    display:flex;
-    justify-content:center;
-
-    margin:20px 0;
-}
-
-#drawCanvas{
-    width:640px;
-    max-width:100%;
-
-    height:auto;
-
-    background:black;
-
-    border:3px solid #596575;
-
-    image-rendering:pixelated;
-
-    cursor:crosshair;
-
-    touch-action:none;
-}
-
-
-/* ============================= */
-/* DRAW TOOLS */
-/* ============================= */
-
-.toolGrid{
-    display:grid;
-
-    grid-template-columns:repeat(4,1fr);
-
-    gap:10px;
-
-    margin-top:15px;
-}
-
-.tool{
-    background:#27313d;
-    color:white;
-
-    border:none;
-    border-radius:12px;
-
-    padding:13px;
-
-    cursor:pointer;
-    font-weight:bold;
-}
-
-.tool.active{
-    background:white;
-    color:black;
-}
-
-
-/* ============================= */
-/* EFFECTS */
-/* ============================= */
-
-.effectGrid{
-    display:grid;
-
-    grid-template-columns:repeat(3,1fr);
-
-    gap:10px;
-
-    margin-top:15px;
-}
-
-.effect{
-    background:#27313d;
-    color:white;
-
-    border:none;
-    border-radius:12px;
-
-    padding:13px;
-
-    cursor:pointer;
-    font-weight:bold;
-}
-
-
-/* ============================= */
-/* ABOUT */
-/* ============================= */
-
-.aboutText{
-    color:#aab4c2;
-    line-height:1.6;
-    margin-top:12px;
-}
-
-
-/* ============================= */
-/* MOBILE */
-/* ============================= */
-
-@media(max-width:700px){
-
-    body{
-        padding:10px;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>OLED Studio</title>
+
+  <!-- MQTT.js -->
+  <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
     }
 
-    .header{
-        flex-direction:column;
-        align-items:flex-start;
-        gap:15px;
+    body {
+      background: #0b0f14;
+      color: white;
+      min-height: 100vh;
+      padding: 20px;
     }
 
-    .grid{
-        grid-template-columns:1fr;
+    .container {
+      max-width: 900px;
+      margin: auto;
     }
 
-    .oled{
-        width:100%;
-        max-width:320px;
+    h1 {
+      text-align: center;
+      margin-bottom: 8px;
     }
 
-    .toolGrid{
-        grid-template-columns:repeat(2,1fr);
+    .subtitle {
+      text-align: center;
+      color: #9ca3af;
+      margin-bottom: 20px;
     }
 
-    .effectGrid{
-        grid-template-columns:1fr;
+    .status {
+      background: #151b23;
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      text-align: center;
+      border: 1px solid #293241;
     }
 
-}
+    #statusText {
+      font-weight: bold;
+    }
 
-</style>
+    .online {
+      color: #22c55e;
+    }
 
+    .offline {
+      color: #ef4444;
+    }
+
+    .card {
+      background: #151b23;
+      border: 1px solid #293241;
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .card h2 {
+      margin-bottom: 15px;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid #374151;
+      background: #0b0f14;
+      color: white;
+      font-size: 16px;
+      margin-bottom: 12px;
+    }
+
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 13px 18px;
+      margin: 5px;
+      background: #2563eb;
+      color: white;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.85;
+    }
+
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .heart {
+      background: #e11d48;
+    }
+
+    .who {
+      background: #7c3aed;
+    }
+
+    .draw {
+      background: #059669;
+    }
+
+    #drawArea {
+      display: none;
+      text-align: center;
+    }
+
+    canvas {
+      background: black;
+      border: 2px solid #374151;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 500px;
+      height: 300px;
+      touch-action: none;
+      cursor: crosshair;
+    }
+
+    .draw-buttons {
+      margin-top: 12px;
+    }
+
+    .clear {
+      background: #dc2626;
+    }
+
+    .send {
+      background: #16a34a;
+    }
+
+    .log {
+      background: #080b0f;
+      border-radius: 10px;
+      padding: 12px;
+      height: 130px;
+      overflow-y: auto;
+      font-family: monospace;
+      font-size: 13px;
+      color: #a7f3d0;
+    }
+
+    .footer {
+      text-align: center;
+      color: #6b7280;
+      margin-top: 20px;
+      font-size: 13px;
+    }
+  </style>
 </head>
-
 
 <body>
 
-
 <div class="container">
 
+  <h1>📺 OLED STUDIO</h1>
 
-<!-- ============================= -->
-<!-- HEADER -->
-<!-- ============================= -->
+  <p class="subtitle">
+    Control your OLED through MQTT
+  </p>
 
-<div class="header">
+  <!-- MQTT STATUS -->
+  <div class="status">
+    MQTT Status:
+    <span id="statusText" class="offline">Connecting...</span>
+  </div>
 
-    <div>
+  <!-- TEXT -->
+  <div class="card">
 
-        <div class="logo">
-            ⚡ OLED STUDIO
-        </div>
+    <h2>📝 Display Text</h2>
 
-        <div class="subtitle">
-            Interactive OLED Controller
-        </div>
+    <input
+      type="text"
+      id="textInput"
+      placeholder="Enter text for OLED"
+      maxlength="80"
+    >
+
+    <div class="buttons">
+
+      <button onclick="sendText()">
+        📺 Show Text
+      </button>
+
+      <button class="heart" onclick="sendHeart()">
+        ❤️ Heart
+      </button>
+
+      <button class="who" onclick="sendWho()">
+        👤 Who Invented?
+      </button>
 
     </div>
 
+  </div>
 
-    <div
-    class="status"
-    id="mqttStatus">
+  <!-- DRAW -->
+  <div class="card">
 
-        ● MQTT CONNECTING...
+    <h2>✏️ Draw</h2>
 
+    <div class="buttons">
+      <button class="draw" onclick="openDraw()">
+        ✏️ Open Drawing
+      </button>
     </div>
 
-</div>
+    <div id="drawArea">
 
+      <br>
 
+      <canvas id="canvas" width="500" height="300"></canvas>
 
-<!-- ============================= -->
-<!-- MAIN BUTTONS -->
-<!-- ============================= -->
+      <div class="draw-buttons">
 
-<div class="grid">
-
-
-    <div class="card">
-
-        <h2>✍️ WRITE</h2>
-
-        <p>
-            Type text and prepare it for OLED
-        </p>
-
-        <button
-        class="mainButton"
-        onclick="openWrite()">
-
-            WRITE
-
+        <button class="clear" onclick="clearCanvas()">
+          🗑 Clear
         </button>
 
-    </div>
-
-
-
-    <div class="card">
-
-        <h2>🎨 DRAW</h2>
-
-        <p>
-            Draw directly on a 128 × 64 canvas
-        </p>
-
-        <button
-        class="mainButton"
-        onclick="openDraw()">
-
-            DRAW
-
+        <button class="send" onclick="sendDrawing()">
+          📺 Send Drawing
         </button>
 
-    </div>
-
-
-
-    <div class="card">
-
-        <h2>❤️ HEART</h2>
-
-        <p>
-            Display a heart on OLED
-        </p>
-
-        <button
-        class="mainButton"
-        onclick="heart()">
-
-            HEART
-
-        </button>
+      </div>
 
     </div>
 
+  </div>
 
+  <!-- LOG -->
+  <div class="card">
 
-    <div class="card">
+    <h2>📡 MQTT Log</h2>
 
-        <h2>⭐ STAR</h2>
-
-        <p>
-            Display a star on OLED
-        </p>
-
-        <button
-        class="mainButton"
-        onclick="star()">
-
-            STAR
-
-        </button>
-
+    <div id="log" class="log">
+      Starting...
     </div>
 
+  </div>
+
+  <div class="footer">
+    OLED Studio • ESP8266 + MQTT
+  </div>
 
 </div>
-
-
-
-<!-- ============================= -->
-<!-- WRITE PANEL -->
-<!-- ============================= -->
-
-<div
-class="panel"
-id="writePanel">
-
-<h2>✍️ Write to OLED</h2>
-
-
-<textarea
-id="textInput"
-maxlength="120"
-placeholder="Type your text here..."></textarea>
-
-
-<button
-class="sendButton"
-onclick="sendText()">
-
-    SEND TO OLED
-
-</button>
-
-
-
-<div class="panel">
-
-<h3>✨ OLED EFFECTS</h3>
-
-
-<div class="effectGrid">
-
-
-<button
-class="effect"
-onclick="normalEffect()">
-
-    NORMAL
-
-</button>
-
-
-<button
-class="effect"
-onclick="scrollEffect()">
-
-    SCROLL
-
-</button>
-
-
-<button
-class="effect"
-onclick="blinkEffect()">
-
-    BLINK
-
-</button>
-
-
-</div>
-
-</div>
-
-</div>
-
-
-
-<!-- ============================= -->
-<!-- DRAW PANEL -->
-<!-- ============================= -->
-
-<div
-class="panel"
-id="drawPanel">
-
-
-<h2>
-    🎨 Draw on OLED
-</h2>
-
-
-<p
-style="color:#9da8b8;margin-top:8px;">
-
-    Draw using your mouse or finger.
-
-    <br>
-
-    Canvas resolution: 128 × 64 pixels.
-
-</p>
-
-
-
-<div class="canvasWrapper">
-
-<canvas
-id="drawCanvas"
-width="128"
-height="64">
-
-</canvas>
-
-</div>
-
-
-
-<div class="toolGrid">
-
-
-<button
-class="tool active"
-id="penButton"
-onclick="setPen()">
-
-    ✏️ PEN
-
-</button>
-
-
-<button
-class="tool"
-id="eraserButton"
-onclick="setEraser()">
-
-    🧽 ERASER
-
-</button>
-
-
-<button
-class="tool"
-onclick="undo()">
-
-    ↩️ UNDO
-
-</button>
-
-
-<button
-class="tool"
-onclick="redo()">
-
-    ↪️ REDO
-
-</button>
-
-
-<button
-class="tool"
-onclick="clearCanvas()">
-
-    🗑️ CLEAR
-
-</button>
-
-
-</div>
-
-
-
-<button
-class="sendButton"
-onclick="sendDrawing()">
-
-    📤 SEND DRAWING TO OLED
-
-</button>
-
-
-</div>
-
-
-
-<!-- ============================= -->
-<!-- OLED PREVIEW -->
-<!-- ============================= -->
-
-<div class="panel">
-
-
-<h2>
-    📺 OLED PREVIEW
-</h2>
-
-
-<div class="oled">
-
-<div
-id="oledText"
-class="oledText">
-
-OLED 128 × 64
-
-</div>
-
-</div>
-
-
-</div>
-
-
-
-<!-- ============================= -->
-<!-- ABOUT -->
-<!-- ============================= -->
-
-<div class="panel">
-
-
-<h2>
-    ℹ️ ABOUT
-</h2>
-
-
-<p class="aboutText">
-
-OLED Studio is an interactive web dashboard
-designed to control an OLED display using
-ESP8266 and MQTT.
-
-</p>
-
-
-<p class="aboutText">
-
-<strong>
-
-This project is developed by Sangeeth Varma
-
-</strong>
-
-</p>
-
-
-</div>
-
-
-</div>
-
-
-
-<!-- ================================================== -->
-<!-- MQTT.JS -->
-<!-- ================================================== -->
-
-<script
-src="https://unpkg.com/mqtt/dist/mqtt.min.js">
-</script>
-
 
 
 <script>
 
+  /* ==========================================
+     MQTT SETTINGS
+     ========================================== */
 
-// ==================================================
-// MQTT SETTINGS
-// ==================================================
+  const MQTT_URL =
+    "wss://broker.emqx.io:8084/mqtt";
 
-const MQTT_BROKER =
-"wss://broker.emqx.io:8084/mqtt";
-
-
-const MQTT_TOPIC =
-"sangeeth/oled-studio/test";
+  const MQTT_TOPIC =
+    "sangeeth/oled-studio/test";
 
 
-const clientId =
-"oled_web_" +
-Math.random()
-.toString(16)
-.substring(2,10);
+  /* ==========================================
+     MQTT CLIENT
+     ========================================== */
+
+  const clientId =
+    "OLED_WEB_" +
+    Math.random().toString(16).substring(2, 10);
+
+  const client =
+    mqtt.connect(MQTT_URL, {
+      clientId: clientId,
+      clean: true,
+      connectTimeout: 5000,
+      reconnectPeriod: 3000
+    });
 
 
-// ==================================================
-// MQTT CONNECT
-// ==================================================
+  /* ==========================================
+     ELEMENTS
+     ========================================== */
 
-const mqttClient =
-mqtt.connect(
+  const statusText =
+    document.getElementById("statusText");
 
-    MQTT_BROKER,
-
-    {
-        clientId:clientId,
-
-        clean:true,
-
-        connectTimeout:10000,
-
-        reconnectPeriod:3000
-    }
-
-);
+  const logBox =
+    document.getElementById("log");
 
 
-// ==================================================
-// MQTT CONNECTED
-// ==================================================
+  /* ==========================================
+     LOG FUNCTION
+     ========================================== */
 
-mqttClient.on(
-"connect",
+  function log(message) {
 
-function(){
+    const time =
+      new Date().toLocaleTimeString();
 
-    console.log(
-        "MQTT Connected"
-    );
+    logBox.innerHTML +=
+      "<br>[" + time + "] " + message;
 
-
-    document
-    .getElementById("mqttStatus")
-    .innerText =
-    "● MQTT ONLINE";
+    logBox.scrollTop =
+      logBox.scrollHeight;
+  }
 
 
-    document
-    .getElementById("mqttStatus")
-    .style.color =
-    "#00ff88";
+  /* ==========================================
+     MQTT CONNECT
+     ========================================== */
 
+  client.on("connect", function () {
 
-    mqttClient.subscribe(
+    statusText.textContent =
+      "ONLINE";
 
-        MQTT_TOPIC,
+    statusText.className =
+      "online";
 
-        function(error){
+    log("MQTT connected");
 
-            if(error){
+    client.subscribe(
+      MQTT_TOPIC,
+      function(error) {
 
-                console.log(
-                    "Subscribe error:",
-                    error
-                );
+        if (error) {
 
-            }
-            else{
+          log("Subscribe error");
 
-                console.log(
-                    "Subscribed:",
-                    MQTT_TOPIC
-                );
+        } else {
 
-            }
+          log(
+            "Subscribed: " +
+            MQTT_TOPIC
+          );
 
         }
 
+      }
     );
 
-});
+  });
 
 
-// ==================================================
-// MQTT ERROR
-// ==================================================
+  /* ==========================================
+     MQTT ERROR
+     ========================================== */
 
-mqttClient.on(
-"error",
+  client.on("error", function(error) {
 
-function(error){
+    statusText.textContent =
+      "ERROR";
 
-    console.log(
-        "MQTT Error:",
-        error
+    statusText.className =
+      "offline";
+
+    log(
+      "MQTT error: " +
+      error.message
     );
 
-});
+  });
 
 
-// ==================================================
-// MQTT CLOSED
-// ==================================================
+  /* ==========================================
+     MQTT OFFLINE
+     ========================================== */
 
-mqttClient.on(
-"close",
+  client.on("offline", function() {
 
-function(){
+    statusText.textContent =
+      "OFFLINE";
 
-    document
-    .getElementById("mqttStatus")
-    .innerText =
-    "● MQTT OFFLINE";
+    statusText.className =
+      "offline";
 
+    log("MQTT offline");
 
-    document
-    .getElementById("mqttStatus")
-    .style.color =
-    "#ff5555";
-
-});
+  });
 
 
-// ==================================================
-// MQTT MESSAGE
-// ==================================================
+  /* ==========================================
+     PUBLISH FUNCTION
+     ========================================== */
 
-mqttClient.on(
-"message",
+  function publishMessage(message) {
 
-function(topic,message){
+    if (!client.connected) {
 
-    console.log(
-        "Message received:",
-        topic,
-        message.toString()
+      alert("MQTT is not connected!");
+
+      return;
+
+    }
+
+    client.publish(
+      MQTT_TOPIC,
+      message,
+      {
+        qos: 0
+      },
+      function(error) {
+
+        if (error) {
+
+          log(
+            "Publish error"
+          );
+
+        } else {
+
+          log(
+            "Sent: " +
+            message
+          );
+
+        }
+
+      }
     );
 
-});
+  }
 
 
+  /* ==========================================
+     SHOW TEXT
+     ========================================== */
 
-// ==================================================
-// CANVAS
-// ==================================================
+  function sendText() {
 
-const canvas =
-document.getElementById(
-    "drawCanvas"
-);
+    const text =
+      document.getElementById(
+        "textInput"
+      ).value.trim();
 
+    if (text === "") {
 
-const ctx =
-canvas.getContext("2d");
+      alert("Enter some text first!");
 
+      return;
 
-let drawing=false;
+    }
 
-let tool="pen";
-
-let history=[];
-
-let redoHistory=[];
-
-
-// ==================================================
-// CANVAS SETUP
-// ==================================================
-
-function setupCanvas(){
-
-    ctx.fillStyle="black";
-
-    ctx.fillRect(
-        0,
-        0,
-        128,
-        64
+    publishMessage(
+      "TEXT:" + text
     );
 
-    ctx.strokeStyle="white";
-
-    ctx.lineWidth=1;
-
-    ctx.lineCap="round";
-
-    ctx.lineJoin="round";
-
-}
+  }
 
 
-setupCanvas();
+  /* ==========================================
+     HEART
+     ========================================== */
+
+  function sendHeart() {
+
+    publishMessage(
+      "HEART"
+    );
+
+  }
 
 
-// ==================================================
-// POSITION
-// ==================================================
+  /* ==========================================
+     WHO INVENTED
+     ========================================== */
 
-function getPosition(event){
+  function sendWho() {
+
+    publishMessage(
+      "WHO"
+    );
+
+  }
+
+
+  /* ==========================================
+     DRAWING
+     ========================================== */
+
+  const canvas =
+    document.getElementById(
+      "canvas"
+    );
+
+  const ctx =
+    canvas.getContext("2d");
+
+  let drawing = false;
+
+
+  function openDraw() {
+
+    document.getElementById(
+      "drawArea"
+    ).style.display = "block";
+
+  }
+
+
+  function getPosition(event) {
 
     const rect =
-    canvas.getBoundingClientRect();
+      canvas.getBoundingClientRect();
 
+    let clientX;
+    let clientY;
+
+    if (
+      event.touches &&
+      event.touches.length > 0
+    ) {
+
+      clientX =
+        event.touches[0].clientX;
+
+      clientY =
+        event.touches[0].clientY;
+
+    } else {
+
+      clientX =
+        event.clientX;
+
+      clientY =
+        event.clientY;
+
+    }
 
     return {
 
-        x:
-        (event.clientX-rect.left)
-        *
-        (canvas.width/rect.width),
+      x:
+        (clientX - rect.left) *
+        (canvas.width / rect.width),
 
-
-        y:
-        (event.clientY-rect.top)
-        *
-        (canvas.height/rect.height)
+      y:
+        (clientY - rect.top) *
+        (canvas.height / rect.height)
 
     };
 
-}
+  }
 
 
-// ==================================================
-// START DRAW
-// ==================================================
-
-canvas.addEventListener(
-"pointerdown",
-
-function(event){
+  function startDrawing(event) {
 
     event.preventDefault();
 
-    drawing=true;
+    drawing = true;
 
-
-    canvas.setPointerCapture(
-        event.pointerId
-    );
-
-
-    saveHistory();
-
-
-    const p =
-    getPosition(event);
-
+    const pos =
+      getPosition(event);
 
     ctx.beginPath();
 
     ctx.moveTo(
-        p.x,
-        p.y
+      pos.x,
+      pos.y
     );
 
-});
+  }
 
 
-// ==================================================
-// DRAW
-// ==================================================
+  function draw(event) {
 
-canvas.addEventListener(
-"pointermove",
-
-function(event){
-
-    if(!drawing)
-        return;
-
+    if (!drawing)
+      return;
 
     event.preventDefault();
 
+    const pos =
+      getPosition(event);
 
-    const p =
-    getPosition(event);
+    ctx.lineWidth = 5;
 
+    ctx.lineCap = "round";
 
-    if(tool==="pen"){
-
-        ctx.strokeStyle="white";
-
-        ctx.lineWidth=1;
-
-    }
-    else{
-
-        ctx.strokeStyle="black";
-
-        ctx.lineWidth=5;
-
-    }
-
+    ctx.strokeStyle = "white";
 
     ctx.lineTo(
-        p.x,
-        p.y
+      pos.x,
+      pos.y
     );
-
 
     ctx.stroke();
 
+  }
 
-    ctx.beginPath();
+
+  function stopDrawing() {
+
+    drawing = false;
+
+    ctx.closePath();
+
+  }
 
 
-    ctx.moveTo(
-        p.x,
-        p.y
+  canvas.addEventListener(
+    "mousedown",
+    startDrawing
+  );
+
+  canvas.addEventListener(
+    "mousemove",
+    draw
+  );
+
+  canvas.addEventListener(
+    "mouseup",
+    stopDrawing
+  );
+
+  canvas.addEventListener(
+    "mouseleave",
+    stopDrawing
+  );
+
+
+  canvas.addEventListener(
+    "touchstart",
+    startDrawing,
+    { passive: false }
+  );
+
+  canvas.addEventListener(
+    "touchmove",
+    draw,
+    { passive: false }
+  );
+
+  canvas.addEventListener(
+    "touchend",
+    stopDrawing
+  );
+
+
+  /* ==========================================
+     CLEAR DRAWING
+     ========================================== */
+
+  function clearCanvas() {
+
+    ctx.clearRect(
+      0,
+      0,
+      canvas.width,
+      canvas.height
     );
 
-});
+  }
 
 
-// ==================================================
-// STOP DRAW
-// ==================================================
+  /* ==========================================
+     SEND DRAWING
+     ========================================== */
 
-canvas.addEventListener(
-"pointerup",
-
-function(){
-
-    drawing=false;
-
-    ctx.beginPath();
-
-});
-
-
-canvas.addEventListener(
-"pointercancel",
-
-function(){
-
-    drawing=false;
-
-    ctx.beginPath();
-
-});
-
-
-// ==================================================
-// HISTORY
-// ==================================================
-
-function saveHistory(){
-
-    history.push(
-
-        ctx.getImageData(
-            0,
-            0,
-            128,
-            64
-        )
-
-    );
-
-
-    if(history.length>30){
-
-        history.shift();
-
-    }
-
-
-    redoHistory=[];
-
-}
-
-
-// ==================================================
-// PEN
-// ==================================================
-
-function setPen(){
-
-    tool="pen";
-
-
-    document
-    .getElementById("penButton")
-    .classList.add("active");
-
-
-    document
-    .getElementById("eraserButton")
-    .classList.remove("active");
-
-}
-
-
-// ==================================================
-// ERASER
-// ==================================================
-
-function setEraser(){
-
-    tool="eraser";
-
-
-    document
-    .getElementById("eraserButton")
-    .classList.add("active");
-
-
-    document
-    .getElementById("penButton")
-    .classList.remove("active");
-
-}
-
-
-// ==================================================
-// UNDO
-// ==================================================
-
-function undo(){
-
-    if(history.length===0)
-        return;
-
-
-    redoHistory.push(
-
-        ctx.getImageData(
-            0,
-            0,
-            128,
-            64
-        )
-
-    );
-
-
-    const previous =
-    history.pop();
-
-
-    ctx.putImageData(
-        previous,
-        0,
-        0
-    );
-
-}
-
-
-// ==================================================
-// REDO
-// ==================================================
-
-function redo(){
-
-    if(redoHistory.length===0)
-        return;
-
-
-    history.push(
-
-        ctx.getImageData(
-            0,
-            0,
-            128,
-            64
-        )
-
-    );
-
-
-    const next =
-    redoHistory.pop();
-
-
-    ctx.putImageData(
-        next,
-        0,
-        0
-    );
-
-}
-
-
-// ==================================================
-// CLEAR
-// ==================================================
-
-function clearCanvas(){
-
-    saveHistory();
-
-
-    ctx.fillStyle="black";
-
-
-    ctx.fillRect(
-        0,
-        0,
-        128,
-        64
-    );
-
-}
-
-
-// ==================================================
-// OPEN DRAW
-// ==================================================
-
-function openDraw(){
-
-    document
-    .getElementById("drawPanel")
-    .style.display="block";
-
-
-    document
-    .getElementById("writePanel")
-    .style.display="none";
-
-
-    document
-    .getElementById("drawPanel")
-    .scrollIntoView({
-
-        behavior:"smooth"
-
-    });
-
-}
-
-
-// ==================================================
-// OPEN WRITE
-// ==================================================
-
-function openWrite(){
-
-    document
-    .getElementById("writePanel")
-    .style.display="block";
-
-
-    document
-    .getElementById("drawPanel")
-    .style.display="none";
-
-
-    document
-    .getElementById("writePanel")
-    .scrollIntoView({
-
-        behavior:"smooth"
-
-    });
-
-}
-
-
-// ==================================================
-// SEND TEXT
-// ==================================================
-
-function sendText(){
-
-    const text =
-    document
-    .getElementById("textInput")
-    .value;
-
-
-    if(text.trim()==="")
-        return;
-
-
-    document
-    .getElementById("oledText")
-    .textContent=text;
-
-
-    // MQTT SEND
-
-    if(mqttClient.connected){
-
-        mqttClient.publish(
-            MQTT_TOPIC,
-            "TEXT:" + text
-        );
-
-        console.log(
-            "Text sent:",
-            text
-        );
-
-    }
-
-}
-
-
-// ==================================================
-// HEART
-// ==================================================
-
-function heart(){
-
-    document
-    .getElementById("oledText")
-    .textContent="♥";
-
-
-    if(mqttClient.connected){
-
-        mqttClient.publish(
-            MQTT_TOPIC,
-            "HEART"
-        );
-
-    }
-
-}
-
-
-// ==================================================
-// STAR
-// ==================================================
-
-function star(){
-
-    document
-    .getElementById("oledText")
-    .textContent="★";
-
-
-    if(mqttClient.connected){
-
-        mqttClient.publish(
-            MQTT_TOPIC,
-            "STAR"
-        );
-
-    }
-
-}
-
-
-// ==================================================
-// NORMAL
-// ==================================================
-
-function normalEffect(){
-
-    stopEffects();
-
-}
-
-
-// ==================================================
-// BLINK
-// ==================================================
-
-let blinkTimer=null;
-
-let scrollTimer=null;
-
-
-function blinkEffect(){
-
-    stopEffects();
-
-
-    const element =
-    document
-    .getElementById("oledText");
-
-
-    blinkTimer =
-    setInterval(
-
-        function(){
-
-            if(
-            element.style.visibility
-            ==="hidden"
-            ){
-
-                element.style.visibility=
-                "visible";
-
-            }
-            else{
-
-                element.style.visibility=
-                "hidden";
-
-            }
-
-        },
-
-        500
-
-    );
-
-}
-
-
-// ==================================================
-// SCROLL
-// ==================================================
-
-function scrollEffect(){
-
-    stopEffects();
-
-
-    const element =
-    document
-    .getElementById("oledText");
-
-
-    let position=320;
-
-
-    scrollTimer =
-    setInterval(
-
-        function(){
-
-            position--;
-
-
-            element.style.transform=
-            "translateX("+
-            position+
-            "px)";
-
-
-            if(position<-500){
-
-                position=320;
-
-            }
-
-        },
-
-        30
-
-    );
-
-}
-
-
-// ==================================================
-// STOP EFFECTS
-// ==================================================
-
-function stopEffects(){
-
-    clearInterval(
-        blinkTimer
-    );
-
-
-    clearInterval(
-        scrollTimer
-    );
-
-
-    blinkTimer=null;
-
-    scrollTimer=null;
-
-
-    const element =
-    document
-    .getElementById("oledText");
-
-
-    element.style.visibility=
-    "visible";
-
-
-    element.style.transform=
-    "translateX(0)";
-
-}
-
-
-// ==================================================
-// SEND DRAWING
-// ==================================================
-
-function sendDrawing(){
-
-    if(!mqttClient.connected){
-
-        alert(
-            "MQTT is not connected yet."
-        );
-
-        return;
-
-    }
-
+  function sendDrawing() {
 
     /*
-       For now we only test MQTT.
-
-       Later we will convert the
-       128 × 64 canvas into pixel data
-       and send it to the ESP8266.
+      For now we send a command.
+      Later we will connect this
+      to your NodeMCU OLED drawing
+      function.
     */
 
-
-    mqttClient.publish(
-        MQTT_TOPIC,
-        "DRAWING_READY"
+    publishMessage(
+      "DRAW"
     );
 
-
-    alert(
-        "Drawing sent to MQTT."
-    );
-
-
-    console.log(
-        "Drawing ready for MQTT"
-    );
-
-}
+  }
 
 </script>
 
-
 </body>
-
 </html>
