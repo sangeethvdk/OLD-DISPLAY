@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OLED Studio</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #090d12;
+    color: white;
+    min-height: 100vh;
+    padding: 25px;
+}
+
+.container {
+    max-width: 1100px;
+    margin: auto;
+}
+
+.header {
+    background: #151c25;
+    border-radius: 22px;
+    padding: 28px;
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 32px;
+    font-weight: bold;
+}
+
+.subtitle {
+    color: #9da8b8;
+    margin-top: 8px;
+    font-size: 18px;
+}
+
+.status {
+    color: #00ff88;
+    font-size: 18px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.card {
+    background: #151c25;
+    border-radius: 22px;
+    padding: 30px;
+    transition: 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+}
+
+.card h2 {
+    font-size: 24px;
+    margin-bottom: 8px;
+}
+
+.card p {
+    color: #9da8b8;
+    margin-bottom: 20px;
+}
+
+button {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 12px;
+    background: white;
+    color: black;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: 0.85;
+}
+
+.preview-card {
+    margin-top: 24px;
+    background: #151c25;
+    border-radius: 22px;
+    padding: 30px;
+}
+
+.preview-title {
+    font-size: 22px;
+    margin-bottom: 25px;
+}
+
+.oled {
+    width: 320px;
+    height: 160px;
+    background: black;
+    border: 2px solid #394453;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    overflow: hidden;
+}
+
+.oled-text {
+    color: white;
+    font-family: monospace;
+    font-size: 18px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    padding: 10px;
+}
+
+.write-card {
+    margin-top: 24px;
+    background: #151c25;
+    border-radius: 22px;
+    padding: 30px;
+}
+
+textarea {
+    width: 100%;
+    height: 130px;
+    background: #090d12;
+    color: white;
+    border: 1px solid #394453;
+    border-radius: 14px;
+    padding: 18px;
+    font-size: 16px;
+    resize: vertical;
+    outline: none;
+    margin: 15px 0 18px;
+}
+
+textarea:focus {
+    border-color: white;
+}
+
+.actions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.effect-area {
+    margin-top: 24px;
+    background: #151c25;
+    border-radius: 22px;
+    padding: 30px;
+}
+
+.effect-buttons {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.info {
+    margin-top: 24px;
+    background: #151c25;
+    border-radius: 22px;
+    padding: 30px;
+}
+
+.info p {
+    color: #9da8b8;
+    line-height: 1.6;
+    margin-top: 10px;
+}
+
+@media(max-width: 700px) {
+
+    body {
+        padding: 12px;
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .oled {
+        width: 100%;
+        max-width: 320px;
+    }
+
+    .actions {
+        grid-template-columns: 1fr;
+    }
+
+    .effect-buttons {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- HEADER -->
+    <div class="header">
+        <div>
+            <div class="logo">⚡ OLED STUDIO</div>
+            <div class="subtitle">Interactive OLED Controller</div>
+        </div>
+
+        <div class="status">
+            ● ONLINE
+        </div>
+    </div>
+
+
+    <!-- MAIN BUTTONS -->
+    <div class="grid">
+
+        <div class="card">
+            <h2>✍️ WRITE</h2>
+            <p>Send text to OLED</p>
+            <button onclick="focusWrite()">WRITE</button>
+        </div>
+
+        <div class="card">
+            <h2>🎨 DRAW</h2>
+            <p>Draw pixels on OLED</p>
+            <button onclick="drawDemo()">DRAW</button>
+        </div>
+
+        <div class="card">
+            <h2>❤️ HEART</h2>
+            <p>Display heart animation</p>
+            <button onclick="showHeart()">HEART</button>
+        </div>
+
+        <div class="card">
+            <h2>⭐ STAR</h2>
+            <p>Display star animation</p>
+            <button onclick="showStar()">STAR</button>
+        </div>
+
+    </div>
+
+
+    <!-- OLED PREVIEW -->
+    <div class="preview-card">
+
+        <div class="preview-title">
+            📺 OLED PREVIEW
+        </div>
+
+        <div class="oled">
+            <div id="oledText" class="oled-text">
+                OLED 128 × 64
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- WRITE -->
+    <div class="write-card" id="writeSection">
+
+        <h2>✍️ Write to OLED</h2>
+
+        <textarea
+            id="textInput"
+            maxlength="120"
+            placeholder="Type something to display..."
+        ></textarea>
+
+        <button onclick="sendText()">
+            SEND TO OLED
+        </button>
+
+    </div>
+
+
+    <!-- EFFECTS -->
+    <div class="effect-area">
+
+        <h2>✨ OLED EFFECTS</h2>
+
+        <div class="effect-buttons">
+
+            <button onclick="normalEffect()">
+                NORMAL
+            </button>
+
+            <button onclick="scrollEffect()">
+                SCROLL
+            </button>
+
+            <button onclick="blinkEffect()">
+                BLINK
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- ABOUT -->
+    <div class="info">
+
+        <h2>ℹ️ ABOUT</h2>
+
+        <p>
+            OLED Studio is a web-based controller designed
+            to control an OLED display using an ESP8266.
+        </p>
+
+        <p>
+            Developed by Sangeeth Varma.
+        </p>
+
+    </div>
+
+</div>
+
+
+<script>
+
+let blinkTimer = null;
+let scrollTimer = null;
+
+
+/* WRITE */
+
+function sendText() {
+
+    const text = document.getElementById("textInput").value;
+
+    if(text.trim() === "") {
+        document.getElementById("oledText").textContent =
+            "Please enter text";
+        return;
+    }
+
+    stopEffects();
+
+    document.getElementById("oledText").textContent = text;
+
+    console.log("TEXT:", text);
+}
+
+
+function focusWrite() {
+
+    document.getElementById("textInput").focus();
+
+    document.getElementById("writeSection")
+        .scrollIntoView({
+            behavior: "smooth"
+        });
+}
+
+
+/* DRAW */
+
+function drawDemo() {
+
+    stopEffects();
+
+    document.getElementById("oledText").textContent =
+        "DRAW\nDEMO";
+
+    console.log("DRAW command");
+}
+
+
+/* HEART */
+
+function showHeart() {
+
+    stopEffects();
+
+    document.getElementById("oledText").textContent =
+        "♥";
+
+    console.log("HEART command");
+}
+
+
+/* STAR */
+
+function showStar() {
+
+    stopEffects();
+
+    document.getElementById("oledText").textContent =
+        "★";
+
+    console.log("STAR command");
+}
+
+
+/* NORMAL */
+
+function normalEffect() {
+
+    stopEffects();
+
+    document.getElementById("oledText").style.visibility =
+        "visible";
+}
+
+
+/* BLINK */
+
+function blinkEffect() {
+
+    stopEffects();
+
+    const oled = document.getElementById("oledText");
+
+    blinkTimer = setInterval(() => {
+
+        if(oled.style.visibility === "hidden") {
+            oled.style.visibility = "visible";
+        }
+        else {
+            oled.style.visibility = "hidden";
+        }
+
+    }, 500);
+}
+
+
+/* SCROLL */
+
+function scrollEffect() {
+
+    stopEffects();
+
+    const oled = document.getElementById("oledText");
+
+    let position = 100;
+
+    scrollTimer = setInterval(() => {
+
+        position--;
+
+        oled.style.transform =
+            `translateX(${position}px)`;
+
+        if(position < -300) {
+            position = 100;
+        }
+
+    }, 30);
+}
+
+
+/* STOP EFFECTS */
+
+function stopEffects() {
+
+    clearInterval(blinkTimer);
+    clearInterval(scrollTimer);
+
+    blinkTimer = null;
+    scrollTimer = null;
+
+    const oled = document.getElementById("oledText");
+
+    oled.style.visibility = "visible";
+    oled.style.transform = "translateX(0)";
+}
+
+</script>
+
+</body>
+</html>
