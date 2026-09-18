@@ -5,12 +5,16 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>OLED Studio</title>
 
+
 <style>
+
+/* ============================= */
+/* BASIC */
+/* ============================= */
 
 *{
     box-sizing:border-box;
@@ -30,6 +34,11 @@ body{
     max-width:1100px;
     margin:auto;
 }
+
+
+/* ============================= */
+/* HEADER */
+/* ============================= */
 
 .header{
     background:#151c25;
@@ -53,9 +62,14 @@ body{
 }
 
 .status{
-    color:#00ff88;
+    color:#ffaa00;
     font-weight:bold;
 }
+
+
+/* ============================= */
+/* MAIN CARDS */
+/* ============================= */
 
 .grid{
     display:grid;
@@ -78,24 +92,26 @@ body{
     margin-bottom:18px;
 }
 
-button{
+.mainButton{
+    width:100%;
+    background:white;
+    color:black;
     border:none;
     border-radius:12px;
-    padding:14px 18px;
+    padding:14px;
     cursor:pointer;
     font-weight:bold;
     font-size:15px;
 }
 
-.mainButton{
-    width:100%;
-    background:white;
-    color:black;
-}
-
 .mainButton:hover{
     opacity:.85;
 }
+
+
+/* ============================= */
+/* PANELS */
+/* ============================= */
 
 .panel{
     background:#151c25;
@@ -103,6 +119,11 @@ button{
     padding:25px;
     margin-top:20px;
 }
+
+
+/* ============================= */
+/* WRITE */
+/* ============================= */
 
 textarea{
     width:100%;
@@ -121,6 +142,27 @@ textarea{
     font-size:16px;
     resize:vertical;
 }
+
+.sendButton{
+    width:100%;
+    margin-top:15px;
+
+    background:white;
+    color:black;
+
+    border:none;
+    border-radius:12px;
+
+    padding:14px;
+
+    cursor:pointer;
+    font-weight:bold;
+}
+
+
+/* ============================= */
+/* OLED PREVIEW */
+/* ============================= */
 
 .oled{
     width:320px;
@@ -144,30 +186,30 @@ textarea{
 .oledText{
     font-family:monospace;
     font-size:18px;
+
     white-space:pre-wrap;
     word-break:break-word;
 }
 
 
-/* DRAWING AREA */
+/* ============================= */
+/* DRAWING */
+/* ============================= */
 
 #drawPanel{
     display:none;
 }
 
 .canvasWrapper{
-
     width:100%;
 
     display:flex;
     justify-content:center;
 
     margin:20px 0;
-
 }
 
 #drawCanvas{
-
     width:640px;
     max-width:100%;
 
@@ -182,90 +224,84 @@ textarea{
     cursor:crosshair;
 
     touch-action:none;
-
 }
 
 
-/* DRAW CONTROLS */
+/* ============================= */
+/* DRAW TOOLS */
+/* ============================= */
 
 .toolGrid{
-
     display:grid;
 
-    grid-template-columns:
-    repeat(4,1fr);
+    grid-template-columns:repeat(4,1fr);
 
     gap:10px;
 
     margin-top:15px;
-
 }
 
 .tool{
-
     background:#27313d;
-
     color:white;
 
+    border:none;
+    border-radius:12px;
+
+    padding:13px;
+
+    cursor:pointer;
+    font-weight:bold;
 }
 
 .tool.active{
-
     background:white;
-
     color:black;
-
-}
-
-.sendButton{
-
-    width:100%;
-
-    margin-top:15px;
-
-    background:white;
-
-    color:black;
-
 }
 
 
-/* WRITE CONTROLS */
+/* ============================= */
+/* EFFECTS */
+/* ============================= */
 
 .effectGrid{
-
     display:grid;
 
-    grid-template-columns:
-    repeat(3,1fr);
+    grid-template-columns:repeat(3,1fr);
 
     gap:10px;
 
     margin-top:15px;
-
 }
 
 .effect{
-
     background:#27313d;
-
     color:white;
 
+    border:none;
+    border-radius:12px;
+
+    padding:13px;
+
+    cursor:pointer;
+    font-weight:bold;
 }
 
 
+/* ============================= */
 /* ABOUT */
+/* ============================= */
 
 .aboutText{
-
     color:#aab4c2;
-
     line-height:1.6;
-
     margin-top:12px;
-
 }
 
+
+/* ============================= */
+/* MOBILE */
+/* ============================= */
 
 @media(max-width:700px){
 
@@ -289,8 +325,7 @@ textarea{
     }
 
     .toolGrid{
-        grid-template-columns:
-        repeat(2,1fr);
+        grid-template-columns:repeat(2,1fr);
     }
 
     .effectGrid{
@@ -310,119 +345,130 @@ textarea{
 <div class="container">
 
 
+<!-- ============================= -->
 <!-- HEADER -->
+<!-- ============================= -->
 
 <div class="header">
 
-<div>
+    <div>
 
-<div class="logo">
-⚡ OLED STUDIO
+        <div class="logo">
+            ⚡ OLED STUDIO
+        </div>
+
+        <div class="subtitle">
+            Interactive OLED Controller
+        </div>
+
+    </div>
+
+
+    <div
+    class="status"
+    id="mqttStatus">
+
+        ● MQTT CONNECTING...
+
+    </div>
+
 </div>
 
-<div class="subtitle">
-Interactive OLED Controller
-</div>
-
-</div>
-
-<div class="status">
-● READY
-</div>
-
-</div>
 
 
-
+<!-- ============================= -->
 <!-- MAIN BUTTONS -->
+<!-- ============================= -->
 
 <div class="grid">
 
 
-<div class="card">
+    <div class="card">
 
-<h2>✍️ WRITE</h2>
+        <h2>✍️ WRITE</h2>
 
-<p>
-Type text and prepare it for OLED
-</p>
+        <p>
+            Type text and prepare it for OLED
+        </p>
 
-<button
-class="mainButton"
-onclick="openWrite()">
+        <button
+        class="mainButton"
+        onclick="openWrite()">
 
-WRITE
+            WRITE
 
-</button>
+        </button>
+
+    </div>
+
+
+
+    <div class="card">
+
+        <h2>🎨 DRAW</h2>
+
+        <p>
+            Draw directly on a 128 × 64 canvas
+        </p>
+
+        <button
+        class="mainButton"
+        onclick="openDraw()">
+
+            DRAW
+
+        </button>
+
+    </div>
+
+
+
+    <div class="card">
+
+        <h2>❤️ HEART</h2>
+
+        <p>
+            Display a heart on OLED
+        </p>
+
+        <button
+        class="mainButton"
+        onclick="heart()">
+
+            HEART
+
+        </button>
+
+    </div>
+
+
+
+    <div class="card">
+
+        <h2>⭐ STAR</h2>
+
+        <p>
+            Display a star on OLED
+        </p>
+
+        <button
+        class="mainButton"
+        onclick="star()">
+
+            STAR
+
+        </button>
+
+    </div>
+
 
 </div>
 
 
 
-<div class="card">
-
-<h2>🎨 DRAW</h2>
-
-<p>
-Draw directly on a 128 × 64 canvas
-</p>
-
-<button
-class="mainButton"
-onclick="openDraw()">
-
-DRAW
-
-</button>
-
-</div>
-
-
-
-<div class="card">
-
-<h2>❤️ HEART</h2>
-
-<p>
-Display a heart on the OLED
-</p>
-
-<button
-class="mainButton"
-onclick="heart()">
-
-HEART
-
-</button>
-
-</div>
-
-
-
-<div class="card">
-
-<h2>⭐ STAR</h2>
-
-<p>
-Display a star on the OLED
-</p>
-
-<button
-class="mainButton"
-onclick="star()">
-
-STAR
-
-</button>
-
-</div>
-
-
-</div>
-
-
-
+<!-- ============================= -->
 <!-- WRITE PANEL -->
+<!-- ============================= -->
 
 <div
 class="panel"
@@ -430,74 +476,91 @@ id="writePanel">
 
 <h2>✍️ Write to OLED</h2>
 
+
 <textarea
 id="textInput"
 maxlength="120"
 placeholder="Type your text here..."></textarea>
 
+
 <button
 class="sendButton"
 onclick="sendText()">
 
-SEND TO OLED
+    SEND TO OLED
 
 </button>
 
 
+
 <div class="panel">
 
-<h3>✨ Effects</h3>
+<h3>✨ OLED EFFECTS</h3>
+
 
 <div class="effectGrid">
+
 
 <button
 class="effect"
 onclick="normalEffect()">
 
-NORMAL
+    NORMAL
 
 </button>
+
 
 <button
 class="effect"
 onclick="scrollEffect()">
 
-SCROLL
+    SCROLL
 
 </button>
+
 
 <button
 class="effect"
 onclick="blinkEffect()">
 
-BLINK
+    BLINK
 
 </button>
 
-</div>
 
 </div>
 
 </div>
 
+</div>
 
 
+
+<!-- ============================= -->
 <!-- DRAW PANEL -->
+<!-- ============================= -->
 
 <div
 class="panel"
 id="drawPanel">
 
-<h2>🎨 Draw on OLED</h2>
+
+<h2>
+    🎨 Draw on OLED
+</h2>
+
 
 <p
 style="color:#9da8b8;margin-top:8px;">
 
-Draw using your mouse or finger.
+    Draw using your mouse or finger.
 
-Canvas resolution: 128 × 64 pixels.
+    <br>
+
+    Canvas resolution: 128 × 64 pixels.
 
 </p>
+
 
 
 <div class="canvasWrapper">
@@ -506,22 +569,22 @@ Canvas resolution: 128 × 64 pixels.
 id="drawCanvas"
 width="128"
 height="64">
+
 </canvas>
 
 </div>
 
 
 
-<!-- TOOLS -->
-
 <div class="toolGrid">
+
 
 <button
 class="tool active"
 id="penButton"
 onclick="setPen()">
 
-✏️ PEN
+    ✏️ PEN
 
 </button>
 
@@ -531,7 +594,7 @@ class="tool"
 id="eraserButton"
 onclick="setEraser()">
 
-🧽 ERASER
+    🧽 ERASER
 
 </button>
 
@@ -540,7 +603,7 @@ onclick="setEraser()">
 class="tool"
 onclick="undo()">
 
-↩️ UNDO
+    ↩️ UNDO
 
 </button>
 
@@ -549,7 +612,7 @@ onclick="undo()">
 class="tool"
 onclick="redo()">
 
-↪️ REDO
+    ↪️ REDO
 
 </button>
 
@@ -558,18 +621,20 @@ onclick="redo()">
 class="tool"
 onclick="clearCanvas()">
 
-🗑️ CLEAR
+    🗑️ CLEAR
 
 </button>
 
+
 </div>
+
 
 
 <button
 class="sendButton"
 onclick="sendDrawing()">
 
-📤 SEND DRAWING TO OLED
+    📤 SEND DRAWING TO OLED
 
 </button>
 
@@ -578,11 +643,17 @@ onclick="sendDrawing()">
 
 
 
+<!-- ============================= -->
 <!-- OLED PREVIEW -->
+<!-- ============================= -->
 
 <div class="panel">
 
-<h2>📺 OLED PREVIEW</h2>
+
+<h2>
+    📺 OLED PREVIEW
+</h2>
+
 
 <div class="oled">
 
@@ -596,15 +667,22 @@ OLED 128 × 64
 
 </div>
 
+
 </div>
 
 
 
+<!-- ============================= -->
 <!-- ABOUT -->
+<!-- ============================= -->
 
 <div class="panel">
 
-<h2>ℹ️ ABOUT</h2>
+
+<h2>
+    ℹ️ ABOUT
+</h2>
+
 
 <p class="aboutText">
 
@@ -614,33 +692,207 @@ ESP8266 and MQTT.
 
 </p>
 
+
 <p class="aboutText">
 
 <strong>
+
 This project is developed by Sangeeth Varma
+
 </strong>
 
 </p>
 
+
 </div>
 
 
 </div>
+
+
+
+<!-- ================================================== -->
+<!-- MQTT.JS -->
+<!-- ================================================== -->
+
+<script
+src="https://unpkg.com/mqtt/dist/mqtt.min.js">
+</script>
 
 
 
 <script>
 
 
-// ======================================
-// VARIABLES
-// ======================================
+// ==================================================
+// MQTT SETTINGS
+// ==================================================
+
+const MQTT_BROKER =
+"wss://broker.emqx.io:8084/mqtt";
+
+
+const MQTT_TOPIC =
+"sangeeth/oled-studio/test";
+
+
+const clientId =
+"oled_web_" +
+Math.random()
+.toString(16)
+.substring(2,10);
+
+
+// ==================================================
+// MQTT CONNECT
+// ==================================================
+
+const mqttClient =
+mqtt.connect(
+
+    MQTT_BROKER,
+
+    {
+        clientId:clientId,
+
+        clean:true,
+
+        connectTimeout:10000,
+
+        reconnectPeriod:3000
+    }
+
+);
+
+
+// ==================================================
+// MQTT CONNECTED
+// ==================================================
+
+mqttClient.on(
+"connect",
+
+function(){
+
+    console.log(
+        "MQTT Connected"
+    );
+
+
+    document
+    .getElementById("mqttStatus")
+    .innerText =
+    "● MQTT ONLINE";
+
+
+    document
+    .getElementById("mqttStatus")
+    .style.color =
+    "#00ff88";
+
+
+    mqttClient.subscribe(
+
+        MQTT_TOPIC,
+
+        function(error){
+
+            if(error){
+
+                console.log(
+                    "Subscribe error:",
+                    error
+                );
+
+            }
+            else{
+
+                console.log(
+                    "Subscribed:",
+                    MQTT_TOPIC
+                );
+
+            }
+
+        }
+
+    );
+
+});
+
+
+// ==================================================
+// MQTT ERROR
+// ==================================================
+
+mqttClient.on(
+"error",
+
+function(error){
+
+    console.log(
+        "MQTT Error:",
+        error
+    );
+
+});
+
+
+// ==================================================
+// MQTT CLOSED
+// ==================================================
+
+mqttClient.on(
+"close",
+
+function(){
+
+    document
+    .getElementById("mqttStatus")
+    .innerText =
+    "● MQTT OFFLINE";
+
+
+    document
+    .getElementById("mqttStatus")
+    .style.color =
+    "#ff5555";
+
+});
+
+
+// ==================================================
+// MQTT MESSAGE
+// ==================================================
+
+mqttClient.on(
+"message",
+
+function(topic,message){
+
+    console.log(
+        "Message received:",
+        topic,
+        message.toString()
+    );
+
+});
+
+
+
+// ==================================================
+// CANVAS
+// ==================================================
 
 const canvas =
-document.getElementById("drawCanvas");
+document.getElementById(
+    "drawCanvas"
+);
+
 
 const ctx =
 canvas.getContext("2d");
+
 
 let drawing=false;
 
@@ -651,9 +903,9 @@ let history=[];
 let redoHistory=[];
 
 
-// ======================================
-// INITIAL CANVAS
-// ======================================
+// ==================================================
+// CANVAS SETUP
+// ==================================================
 
 function setupCanvas(){
 
@@ -662,8 +914,8 @@ function setupCanvas(){
     ctx.fillRect(
         0,
         0,
-        canvas.width,
-        canvas.height
+        128,
+        64
     );
 
     ctx.strokeStyle="white";
@@ -680,14 +932,15 @@ function setupCanvas(){
 setupCanvas();
 
 
-// ======================================
-// GET CANVAS POSITION
-// ======================================
+// ==================================================
+// POSITION
+// ==================================================
 
 function getPosition(event){
 
     const rect =
     canvas.getBoundingClientRect();
+
 
     return {
 
@@ -695,6 +948,7 @@ function getPosition(event){
         (event.clientX-rect.left)
         *
         (canvas.width/rect.width),
+
 
         y:
         (event.clientY-rect.top)
@@ -706,26 +960,31 @@ function getPosition(event){
 }
 
 
-// ======================================
-// START DRAWING
-// ======================================
+// ==================================================
+// START DRAW
+// ==================================================
 
 canvas.addEventListener(
 "pointerdown",
+
 function(event){
 
     event.preventDefault();
 
     drawing=true;
 
+
     canvas.setPointerCapture(
         event.pointerId
     );
 
+
     saveHistory();
+
 
     const p =
     getPosition(event);
+
 
     ctx.beginPath();
 
@@ -737,18 +996,21 @@ function(event){
 });
 
 
-// ======================================
+// ==================================================
 // DRAW
-// ======================================
+// ==================================================
 
 canvas.addEventListener(
 "pointermove",
+
 function(event){
 
     if(!drawing)
         return;
 
+
     event.preventDefault();
+
 
     const p =
     getPosition(event);
@@ -761,7 +1023,6 @@ function(event){
         ctx.lineWidth=1;
 
     }
-
     else{
 
         ctx.strokeStyle="black";
@@ -776,9 +1037,12 @@ function(event){
         p.y
     );
 
+
     ctx.stroke();
 
+
     ctx.beginPath();
+
 
     ctx.moveTo(
         p.x,
@@ -788,12 +1052,13 @@ function(event){
 });
 
 
-// ======================================
-// STOP DRAWING
-// ======================================
+// ==================================================
+// STOP DRAW
+// ==================================================
 
 canvas.addEventListener(
 "pointerup",
+
 function(){
 
     drawing=false;
@@ -805,6 +1070,7 @@ function(){
 
 canvas.addEventListener(
 "pointercancel",
+
 function(){
 
     drawing=false;
@@ -814,20 +1080,23 @@ function(){
 });
 
 
-// ======================================
-// SAVE HISTORY
-// ======================================
+// ==================================================
+// HISTORY
+// ==================================================
 
 function saveHistory(){
 
     history.push(
+
         ctx.getImageData(
             0,
             0,
             128,
             64
         )
+
     );
+
 
     if(history.length>30){
 
@@ -835,22 +1104,25 @@ function saveHistory(){
 
     }
 
+
     redoHistory=[];
 
 }
 
 
-// ======================================
+// ==================================================
 // PEN
-// ======================================
+// ==================================================
 
 function setPen(){
 
     tool="pen";
 
+
     document
     .getElementById("penButton")
     .classList.add("active");
+
 
     document
     .getElementById("eraserButton")
@@ -859,17 +1131,19 @@ function setPen(){
 }
 
 
-// ======================================
+// ==================================================
 // ERASER
-// ======================================
+// ==================================================
 
 function setEraser(){
 
     tool="eraser";
 
+
     document
     .getElementById("eraserButton")
     .classList.add("active");
+
 
     document
     .getElementById("penButton")
@@ -878,9 +1152,9 @@ function setEraser(){
 }
 
 
-// ======================================
+// ==================================================
 // UNDO
-// ======================================
+// ==================================================
 
 function undo(){
 
@@ -889,12 +1163,14 @@ function undo(){
 
 
     redoHistory.push(
+
         ctx.getImageData(
             0,
             0,
             128,
             64
         )
+
     );
 
 
@@ -911,9 +1187,9 @@ function undo(){
 }
 
 
-// ======================================
+// ==================================================
 // REDO
-// ======================================
+// ==================================================
 
 function redo(){
 
@@ -922,12 +1198,14 @@ function redo(){
 
 
     history.push(
+
         ctx.getImageData(
             0,
             0,
             128,
             64
         )
+
     );
 
 
@@ -944,15 +1222,17 @@ function redo(){
 }
 
 
-// ======================================
+// ==================================================
 // CLEAR
-// ======================================
+// ==================================================
 
 function clearCanvas(){
 
     saveHistory();
 
+
     ctx.fillStyle="black";
+
 
     ctx.fillRect(
         0,
@@ -964,9 +1244,9 @@ function clearCanvas(){
 }
 
 
-// ======================================
+// ==================================================
 // OPEN DRAW
-// ======================================
+// ==================================================
 
 function openDraw(){
 
@@ -974,22 +1254,26 @@ function openDraw(){
     .getElementById("drawPanel")
     .style.display="block";
 
+
     document
     .getElementById("writePanel")
     .style.display="none";
 
+
     document
     .getElementById("drawPanel")
     .scrollIntoView({
+
         behavior:"smooth"
+
     });
 
 }
 
 
-// ======================================
+// ==================================================
 // OPEN WRITE
-// ======================================
+// ==================================================
 
 function openWrite(){
 
@@ -997,22 +1281,26 @@ function openWrite(){
     .getElementById("writePanel")
     .style.display="block";
 
+
     document
     .getElementById("drawPanel")
     .style.display="none";
 
+
     document
     .getElementById("writePanel")
     .scrollIntoView({
+
         behavior:"smooth"
+
     });
 
 }
 
 
-// ======================================
-// TEXT
-// ======================================
+// ==================================================
+// SEND TEXT
+// ==================================================
 
 function sendText(){
 
@@ -1021,22 +1309,38 @@ function sendText(){
     .getElementById("textInput")
     .value;
 
-    if(text.trim()===""){
 
+    if(text.trim()==="")
         return;
 
-    }
 
     document
     .getElementById("oledText")
     .textContent=text;
 
+
+    // MQTT SEND
+
+    if(mqttClient.connected){
+
+        mqttClient.publish(
+            MQTT_TOPIC,
+            "TEXT:" + text
+        );
+
+        console.log(
+            "Text sent:",
+            text
+        );
+
+    }
+
 }
 
 
-// ======================================
+// ==================================================
 // HEART
-// ======================================
+// ==================================================
 
 function heart(){
 
@@ -1044,12 +1348,22 @@ function heart(){
     .getElementById("oledText")
     .textContent="♥";
 
+
+    if(mqttClient.connected){
+
+        mqttClient.publish(
+            MQTT_TOPIC,
+            "HEART"
+        );
+
+    }
+
 }
 
 
-// ======================================
+// ==================================================
 // STAR
-// ======================================
+// ==================================================
 
 function star(){
 
@@ -1057,12 +1371,22 @@ function star(){
     .getElementById("oledText")
     .textContent="★";
 
+
+    if(mqttClient.connected){
+
+        mqttClient.publish(
+            MQTT_TOPIC,
+            "STAR"
+        );
+
+    }
+
 }
 
 
-// ======================================
+// ==================================================
 // NORMAL
-// ======================================
+// ==================================================
 
 function normalEffect(){
 
@@ -1071,9 +1395,9 @@ function normalEffect(){
 }
 
 
-// ======================================
+// ==================================================
 // BLINK
-// ======================================
+// ==================================================
 
 let blinkTimer=null;
 
@@ -1084,72 +1408,91 @@ function blinkEffect(){
 
     stopEffects();
 
+
     const element =
     document
     .getElementById("oledText");
 
+
     blinkTimer =
-    setInterval(function(){
+    setInterval(
 
-        if(
-        element.style.visibility
-        ==="hidden"){
+        function(){
 
-            element.style.visibility=
-            "visible";
+            if(
+            element.style.visibility
+            ==="hidden"
+            ){
 
-        }
+                element.style.visibility=
+                "visible";
 
-        else{
+            }
+            else{
 
-            element.style.visibility=
-            "hidden";
+                element.style.visibility=
+                "hidden";
 
-        }
+            }
 
-    },500);
+        },
+
+        500
+
+    );
 
 }
 
 
-// ======================================
+// ==================================================
 // SCROLL
-// ======================================
+// ==================================================
 
 function scrollEffect(){
 
     stopEffects();
 
+
     const element =
     document
     .getElementById("oledText");
+
 
     let position=320;
 
 
     scrollTimer =
-    setInterval(function(){
+    setInterval(
 
-        position--;
+        function(){
 
-        element.style.transform=
-        "translateX("+position+"px)";
+            position--;
 
 
-        if(position < -500){
+            element.style.transform=
+            "translateX("+
+            position+
+            "px)";
 
-            position=320;
 
-        }
+            if(position<-500){
 
-    },30);
+                position=320;
+
+            }
+
+        },
+
+        30
+
+    );
 
 }
 
 
-// ======================================
+// ==================================================
 // STOP EFFECTS
-// ======================================
+// ==================================================
 
 function stopEffects(){
 
@@ -1157,9 +1500,11 @@ function stopEffects(){
         blinkTimer
     );
 
+
     clearInterval(
         scrollTimer
     );
+
 
     blinkTimer=null;
 
@@ -1170,8 +1515,10 @@ function stopEffects(){
     document
     .getElementById("oledText");
 
+
     element.style.visibility=
     "visible";
+
 
     element.style.transform=
     "translateX(0)";
@@ -1179,18 +1526,48 @@ function stopEffects(){
 }
 
 
-// ======================================
+// ==================================================
 // SEND DRAWING
-// ======================================
+// ==================================================
 
 function sendDrawing(){
 
+    if(!mqttClient.connected){
+
+        alert(
+            "MQTT is not connected yet."
+        );
+
+        return;
+
+    }
+
+
+    /*
+       For now we only test MQTT.
+
+       Later we will convert the
+       128 × 64 canvas into pixel data
+       and send it to the ESP8266.
+    */
+
+
+    mqttClient.publish(
+        MQTT_TOPIC,
+        "DRAWING_READY"
+    );
+
+
     alert(
-    "Drawing is ready. MQTT connection will be added next."
+        "Drawing sent to MQTT."
+    );
+
+
+    console.log(
+        "Drawing ready for MQTT"
     );
 
 }
-
 
 </script>
 
